@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* General styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+    }
+
+    h3 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    /* List styling */
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin: 10px 0;
+        font-size: 1.2em;
+    }
+
+    a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    /* Responsive design */
+    @media (max-width: 576px) {
+        .container {
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+        }
+
+        li {
+            font-size: 1em;
+        }
+    }
+</style>
+
+<div class="container">
+    <h3>Список бойцов</h3>
+    <ul>
+        {% for fighter in fighter_info %}
+            <li>
+                <a href="{{ url_for('view_profile', profile_id=fighter[1]) }}">{{ fighter[0] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

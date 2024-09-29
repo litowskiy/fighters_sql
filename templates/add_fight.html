@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Add Fighter to Session{% endblock %}
+
+{% block content %}
+    <style>
+        /* General page styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* Styling for the form */
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin: 5px;
+            min-width: 150px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group select,
+        .form-group input[type="number"] {
+            padding: 5px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group select:focus,
+        .form-group input[type="number"]:focus {
+            outline: none;
+            border-color: #66afe9;
+        }
+
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 600px) {
+            .form-group {
+                min-width: 100%;
+            }
+
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            button {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+
+        /* Hide the session ID input */
+        #session_id {
+            display: none;
+        }
+    </style>
+
+    <div class="container">
+        <h1>Add Fighter to Session</h1>
+        <form id="addFighterForm" method="POST" action="/sessions/{{ session_id }}/add_fight">
+            <input type="hidden" id="session_id" name="session_id" value="{{ session_id }}">
+
+            <div class="form-group">
+                <label for="fighter1">Fighter 1:</label>
+                <select id="fighter1" name="fighter1" required>
+                    <option value="" disabled selected>Select Fighter</option>
+                    {% for fighter in fighters %}
+                        <option value="{{ fighter }}">{{ fighter }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="score1">Score 1:</label>
+                <input type="number" id="score1" name="score1" required min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="fighter2">Fighter 2:</label>
+                <select id="fighter2" name="fighter2" required>
+                    <option value="" disabled selected>Select Fighter</option>
+                    {% for fighter in fighters %}
+                        <option value="{{ fighter }}">{{ fighter }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="score2">Score 2:</label>
+                <input type="number" id="score2" name="score2" required min="0">
+            </div>
+
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+{% endblock %}
