@@ -68,7 +68,7 @@
 </div>
 
 <style>
-  /* Добавляем стили для мобильных устройств */
+  /* Адаптивность для мобильных устройств */
   @media (max-width: 768px) {
       .table-responsive table, .table-responsive thead, .table-responsive tbody, .table-responsive th, .table-responsive td, .table-responsive tr {
           display: block;
@@ -85,16 +85,22 @@
       }
 
       .table-responsive td {
-          display: flex;
-          justify-content: space-between;
+          display: block;
+          width: 100%;
+          text-align: right;
           padding: 10px;
           border: none;
       }
 
       .table-responsive td::before {
           content: attr(data-label);
+          float: left;
           font-weight: bold;
-          margin-right: 10px;
+      }
+
+      .form-control {
+          width: calc(100% - 20px);
+          display: inline-block;
       }
   }
 </style>
