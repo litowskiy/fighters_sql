@@ -1,29 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <meta charset="UTF-8">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Поножовщина на Боровском</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div class="navbar-nav">
-                  <a class="nav-link" href="/mark_presence">Тренировка</a>
-                  <a class="nav-link" href="/main">Основная </a>
-                  <a class="nav-link" href="/sessions">История</a>
-                  <a class="nav-link" href="/profiles">Профили</a>
-              </div>
-            </div>
+{% extends "base.html" %}
+
+{% block title %}Add Fighter to Session{% endblock %}
+
+{% block content %}
+    <h1>Add Fighter to Session</h1>
+    <form id="addFighterForm" method="POST" action="/sessions/{{ session_id }}/add_fight">
+        <div>
+            <label for="session_id">Session ID:</label>
+            <input type="text" id="session_id" name="session_id" value="{{ session_id }}" readonly>
         </div>
-    </nav>
-    {% block content%}
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
-</html>
+        <div>
+            <label for="fighter1">Fighter 1:</label>
+            <select id="fighter1" name="fighter1" required>
+                <option value="" disabled selected>Select Fighter</option>
+                {% for fighter in fighters %}
+                    <option value="{{ fighter }}">{{ fighter }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="score1">Score 1:</label>
+            <input type="number" id="score1" name="score1" required>
+        </div>
+        <div>
+            <label for="fighter2">Fighter 2:</label>
+            <select id="fighter2" name="fighter2" required>
+                <option value="" disabled selected>Select Fighter</option>
+                {% for fighter in fighters %}
+                    <option value="{{ fighter }}">{{ fighter }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="score2">Score 2:</label>
+            <input type="number" id="score2" name="score2" required>
+        </div>
+        <button type="submit">Сохранить</button>
+    </form>
+{% endblock %}
