@@ -1,155 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-    /* General Styling */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-    }
-
-    .container {
-        max-width: 800px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-    }
-
-    h1, h2 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-    }
-
-    /* List Styling */
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li {
-        margin-bottom: 20px;
-    }
-
-    /* Fighter Profile Styling */
-    .fighter-profile {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 6px;
-        margin-bottom: 30px;
-    }
-
-    .fighter-profile h2 {
-        margin-top: 0;
-        margin-bottom: 15px;
-    }
-
-    .fighter-profile ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .fighter-profile li {
-        margin-bottom: 10px;
-        font-size: 1.1em;
-    }
-
-    /* Fight List Styling */
-    .fight-list li {
-        background-color: #e9ecef;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        font-size: 1.1em;
-    }
-
-    /* Link Styling */
-    a {
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    a:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-
-    /* Button Styling */
-    .btn-link {
-        display: inline-block;
-        color: #007bff;
-        background-color: transparent;
-        border: none;
-        padding: 0;
-        font-size: 1em;
-        text-decoration: none;
-        cursor: pointer;
-        margin-top: 20px;
-        text-align: center;
-        width: 100%;
-    }
-
-    .btn-link:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .container {
-            margin: 20px auto;
-            padding: 15px;
-        }
-
-        h1, h2 {
-            font-size: 1.5em;
-        }
-
-        .fighter-profile, .fight-list li {
-            padding: 10px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        h1, h2 {
-            font-size: 1.2em;
-        }
-
-        .fighter-profile, .fight-list li {
-            padding: 8px;
-        }
-
-        .btn-link {
-            font-size: 1em;
-        }
-    }
-</style>
-
-<div class="container">
-    <h1>Профиль бойца</h1>
-
-    {% for fighter in fighter_info %}
-        <div class="fighter-profile">
-            <h2>{{ fighter[1] }}</h2>
-            <ul>
-                <li><strong>Побед:</strong> {{ fighter[2] }}</li>
-                <li><strong>Поражений:</strong> {{ fighter[3] }}</li>
-                <li><strong>КД:</strong> {{ fighter[4] }}</li>
-            </ul>
-        </div>
-    {% endfor %}
-
-    <h2>Бои этого бойца</h2>
-    <ul class="fight-list">
-        {% for fight in fights %}
-            <li>
-                <strong>Бой:</strong> {{ fight[1] }} {{ fight[2] }} - {{ fight[3] }} {{ fight[4] }}
+<div class="container mt-3">
+    <h1 style="text-align: center; margin-bottom: 20px;">Профили бойцов</h1>
+    <ul class="list-unstyled" style="max-width: 800px; margin: 0 auto; padding: 0;">
+        {% for fighter in fighter_info %}
+            <li style="margin-bottom: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">
+                <h2 style="margin-bottom: 15px;">Боец: {{ fighter[1] }}</h2>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li><strong>Побед:</strong> {{ fighter[2] }}</li>
+                    <li><strong>Поражений:</strong> {{ fighter[3] }}</li>
+                    <li><strong>КД:</strong> {{ fighter[4] }}</li>
+                </ul>
             </li>
         {% endfor %}
     </ul>
 
-    <a href="{{ url_for('list_profiles') }}" class="btn-link">К профилям</a>
+    <h2 style="text-align: center; margin-top: 40px;">Бои этого бойца:</h2>
+    <ul class="list-unstyled" style="max-width: 800px; margin: 0 auto; padding: 0;">
+        {% for fight in fights %}
+            {% if fight[1] != 'skip' and fight[4] != 'skip' %}
+                <li style="margin-bottom: 15px; padding: 10px; background-color: #f1f1f1; border-radius: 5px;">
+                    <strong>Бой:</strong> {{ fight[1] }} {{ fight[2] }} - {{ fight[3] }} {{ fight[4] }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('list_profiles') }}" class="btn" style="background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">К профилям</a>
+    </div>
 </div>
+
+<style>
+  /* Адаптивность для мобильных устройств */
+  @media (max-width: 768px) {
+      ul {
+          padding: 0;
+      }
+
+      ul li {
+          font-size: 16px;
+      }
+  }
+</style>
 {% endblock %}

@@ -1,74 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-    /* General styling */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-    }
-
-    .container {
-        max-width: 800px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-    }
-
-    h3 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-    }
-
-    /* List styling */
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li {
-        margin: 10px 0;
-        font-size: 1.2em;
-    }
-
-    a {
-        text-decoration: none;
-        color: #007bff;
-    }
-
-    a:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-
-    /* Responsive design */
-    @media (max-width: 576px) {
-        .container {
-            margin: 20px auto;
-            padding: 15px;
-        }
-
-        h3 {
-            font-size: 1.5em;
-        }
-
-        li {
-            font-size: 1em;
-        }
-    }
-</style>
-
-<div class="container">
-    <h3>Список бойцов</h3>
-    <ul>
+<div class="container mt-3">
+    <h3 style="text-align: center; margin-bottom: 20px;">Список бойцов</h3>
+    <ul class="list-unstyled" style="max-width: 600px; margin: 0 auto; padding: 0; list-style: none;">
         {% for fighter in fighter_info %}
-            <li>
-                <a href="{{ url_for('view_profile', profile_id=fighter[1]) }}">{{ fighter[0] }}</a>
+            <li style="margin-bottom: 15px;">
+                <a href="{{ url_for('view_profile', profile_id=fighter[1]) }}" style="display: block; padding: 10px 15px; background-color: #f8f9fa; border-radius: 5px; text-decoration: none; color: #333; transition: background-color 0.3s ease;">
+                    {{ fighter[0] }}
+                </a>
             </li>
         {% endfor %}
     </ul>
 </div>
+
+<style>
+  /* Hover-эффект для ссылок */
+  ul li a:hover {
+      background-color: #007bff;
+      color: #fff;
+  }
+
+  /* Адаптивность для мобильных устройств */
+  @media (max-width: 768px) {
+      ul {
+          padding: 0;
+      }
+
+      ul li a {
+          font-size: 16px;
+          padding: 12px 15px;
+      }
+  }
+</style>
 {% endblock %}

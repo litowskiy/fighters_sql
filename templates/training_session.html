@@ -1,185 +1,84 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-    /* General Styling */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-    }
+<div class="container mt-3">
+    <h1 style="text-align: center; margin-bottom: 20px;">Тренировочная сессия от {{ today_date }}</h1>
 
-    .container {
-        max-width: 1000px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-    }
-
-    h1 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-    }
-
-    /* Table Styling */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 30px;
-    }
-
-    table, th, td {
-        border: 1px solid #ddd;
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: center;
-    }
-
-    th {
-        background-color: #343a40;
-        color: #fff;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    /* Form Styling */
-    form {
-        margin-bottom: 20px;
-    }
-
-    input[type="number"] {
-        width: 60px;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        text-align: center;
-    }
-
-    /* Button Styling */
-    .btn {
-        display: inline-block;
-        font-weight: 400;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        padding: 10px 20px;
-        margin: 5px 2px;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-    }
-
-    .button {
-        display: inline-block;
-        font-weight: 400;
-        color: #fff;
-        background-color: #28a745;
-        border: none;
-        padding: 10px 20px;
-        margin: 5px 2px;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .button:hover {
-        background-color: #218838;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        input[type="number"] {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        th, td {
-            padding: 8px;
-        }
-
-        .btn, .button {
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        table {
-            font-size: 14px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        h1 {
-            font-size: 1.5em;
-        }
-
-        .container {
-            margin: 20px auto;
-            padding: 15px;
-        }
-
-        input[type="number"] {
-            padding: 8px;
-        }
-
-        .btn, .button {
-            font-size: 18px;
-            padding: 12px;
-        }
-    }
-</style>
-
-<div class="container">
-    <h1>Тренировочная сессия от {{ today_date }}</h1>
     <form method="POST">
-        <table id="matches-table">
-            <tr>
-                <th>Боец 1</th>
-                <th>Счет 1</th>
-                <th>Счет 2</th>
-                <th>Боец 2</th>
-            </tr>
-            {% for match in matches %}
-                {% if match[1] == 'skip' %}
+        <div class="table-responsive" style="overflow-x: auto;">
+            <table id="matches-table" style="width: 100%; border-collapse: collapse; text-align: center;">
+                <thead>
                     <tr>
-                        <td colspan="4">{{ match[4] }} пропускает бой</td>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Боец 1</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Счет 1</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Счет 2</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Боец 2</th>
                     </tr>
-                {% elif match[4] == 'skip' %}
-                    <tr>
-                        <td colspan="4">{{ match[1] }} пропускает бой</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td>{{ match[1] }}</td>
-                        <td>
-                            <input type="number" name="score1_{{ loop.index0 }}" value="0" min="0">
-                        </td>
-                        <td>
-                            <input type="number" name="score2_{{ loop.index0 }}" value="0" min="0">
-                        </td>
-                        <td>{{ match[4] }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </table>
+                </thead>
+                <tbody>
+                    {% for match in matches %}
+                        {% if match[1] == 'skip' %}
+                            <tr>
+                                <td colspan="4" style="padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f9fa;">{{ match[4] }} пропускает бой</td>
+                            </tr>
+                        {% elif match[4] == 'skip' %}
+                            <tr>
+                                <td colspan="4" style="padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f9fa;">{{ match[1] }} пропускает бой</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ match[1] }}</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0" style="width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                </td>
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0" style="width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                </td>
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ match[4] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <input type="hidden" name="total_matches" value="{{ matches|length }}">
-        <button type="submit" class="btn btn-primary">Сохранить результаты</button>
-        <a href="/sessions/{{ today_date }}/add_fight" class="button">Добавить бой</a>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">Сохранить результаты</button>
+            <a href="/sessions/{{ today_date }}/add_fight" style="background-color: #007bff; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; cursor: pointer;">Добавить бой</a>
+        </div>
     </form>
 </div>
+
+<style>
+  /* Адаптивность для таблицы на мобильных устройствах */
+  @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+          display: block;
+      }
+
+      thead tr {
+          display: none;
+      }
+
+      tr {
+          margin-bottom: 15px;
+          border-bottom: 2px solid #ddd;
+          padding-bottom: 10px;
+      }
+
+      td {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+          border: none;
+      }
+
+      td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          margin-right: 10px;
+      }
+  }
+</style>
 {% endblock %}

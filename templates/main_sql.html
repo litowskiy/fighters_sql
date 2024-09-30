@@ -1,221 +1,102 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-    /* General page styling */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-    }
 
-    .container {
-        max-width: 1000px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-    }
-
-    h1, h2 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-    }
-
-    /* Alert styles */
-    .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 4px;
-        color: #fff;
-    }
-
-    .alert-danger, .alert-error {
-        background-color: #dc3545;
-    }
-
-    .alert-warning {
-        background-color: #ffc107;
-        color: #212529;
-    }
-
-    .alert-success {
-        background-color: #28a745;
-    }
-
-    .alert-info {
-        background-color: #17a2b8;
-    }
-
-    /* Table styles */
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 30px;
-    }
-
-    table th, table td {
-        border: 1px solid #ddd;
-        padding: 12px;
-        text-align: center;
-    }
-
-    table th {
-        background-color: #343a40;
-        color: #fff;
-    }
-
-    table tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    /* Button styles */
-    .btn {
-        display: inline-block;
-        font-weight: 400;
-        color: #fff;
-        text-align: center;
-        vertical-align: middle;
-        cursor: pointer;
-        background-color: #007bff;
-        border: none;
-        padding: 8px 16px;
-        margin: 4px 2px;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .btn-danger {
-        background-color: #dc3545;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-    }
-
-    .btn-sm {
-        padding: 5px 10px;
-        font-size: 12px;
-    }
-
-    .btn:hover {
-        opacity: 0.9;
-    }
-
-    /* Form styles */
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        display: block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    .form-label {
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    form {
-        max-width: 500px;
-        margin: 0 auto;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .container {
-            margin: 20px auto;
-            padding: 15px;
-        }
-
-        table th, table td {
-            padding: 8px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 8px 4px;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        h1, h2 {
-            font-size: 1.5em;
-        }
-
-        .btn {
-            width: 100%;
-            margin: 10px 0;
-        }
-    }
-</style>
-
-<div class="container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
         {% for category, message in messages %}
           <div class="alert alert-{{ 'danger' if category == 'error' else category }}" role="alert">{{ message }}</div>
         {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <h1>Статистика</h1>
-    <div class="table-responsive">
-        <table>
-            <thead>
-            <tr>
-                <th>Имя</th>
-                <th>Побед</th>
-                <th>Поражений</th>
-                <th>КД</th>
-                <th>Действия</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for fighter in fighters %}
-            <tr>
-                <td>{{ fighter[1] }}</td>
-                <td>{{ fighter[2] }}</td>
-                <td>{{ fighter[3] }}</td>
-                <td>{{ fighter[4] }}</td>
-                <td>
-                    <form method="POST" action="{{ url_for('main') }}">
-                        <input type="hidden" name="delete" value="{{ fighter[1] }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
     </div>
+  {% endif %}
+{% endwith %}
 
-    <h2>Добавить бойца</h2>
+<div class="container mt-3">
+    <h1 style="text-align: center; margin-bottom: 20px;">Статистика</h1>
+
     <form method="POST" action="{{ url_for('main') }}">
-        <div class="form-group">
-            <label for="name" class="form-label">Имя бойца</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+        <div class="table-responsive" style="overflow-x: auto; margin-bottom: 20px;">
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                <tr>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Имя</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Побед</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Поражений</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">КД</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for fighter in fighters %}
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <input type="text" name="name_{{ fighter[0] }}" value="{{ fighter[1] }}" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                        <input type="hidden" name="original_name_{{ fighter[0] }}" value="{{ fighter[1] }}">
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <input type="number" name="wins_{{ fighter[0] }}" value="{{ fighter[2] }}" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" min="0" required>
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <input type="number" name="loses_{{ fighter[0] }}" value="{{ fighter[3] }}" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" min="0" required>
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        {% if fighter[3] != 0 %}
+                            {{ "%.2f"|format(fighter[2] / fighter[3]) }}
+                        {% else %}
+                            {{ fighter[2] }}
+                        {% endif %}
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <button type="submit" name="delete" value="{{ fighter[0] }}" style="background-color: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">Удалить</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <button type="submit" class="btn btn-primary">Создать бойца</button>
+        <button type="submit" name="save_changes" style="background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Сохранить изменения</button>
+    </form>
+
+    <h2 style="text-align: center; margin: 40px 0 20px;">Добавить бойца</h2>
+    <form method="POST" action="{{ url_for('main') }}" style="max-width: 400px; margin: 0 auto;">
+        <div class="mb-3">
+            <label for="name" class="form-label" style="display: block; margin-bottom: 5px;">Имя бойца</label>
+            <input type="text" class="form-control" id="name" name="name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <button type="submit" style="background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Создать бойца</button>
     </form>
 </div>
+
+<style>
+  /* Добавляем стили для мобильных устройств */
+  @media (max-width: 768px) {
+      .table-responsive table, .table-responsive thead, .table-responsive tbody, .table-responsive th, .table-responsive td, .table-responsive tr {
+          display: block;
+      }
+
+      .table-responsive thead {
+          display: none;
+      }
+
+      .table-responsive tr {
+          margin-bottom: 10px;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 10px;
+      }
+
+      .table-responsive td {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+          border: none;
+      }
+
+      .table-responsive td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          margin-right: 10px;
+      }
+  }
+</style>
 
 {% endblock %}
