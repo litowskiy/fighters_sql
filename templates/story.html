@@ -1,35 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-3">
-    <h3 style="text-align: center; margin-bottom: 20px;">История тренировок</h3>
-    <ul class="list-unstyled" style="max-width: 600px; margin: 0 auto; padding: 0; list-style: none;">
+    <h3>История тренировок</h3>
+    <ul class="list-unstyled">
         {% for table in tables %}
-            <li style="margin-bottom: 15px;">
-                <a href="{{ url_for('training_session', date=table) }}" style="display: block; padding: 10px 15px; background-color: #f8f9fa; border-radius: 5px; text-decoration: none; color: #333; transition: background-color 0.3s ease;">
-                    {{ table }}
-                </a>
+            <li>
+                <a href="{{ url_for('training_session', date=table) }}">{{ table }}</a>
             </li>
         {% endfor %}
     </ul>
 </div>
-
-<style>
-  /* Hover-эффект для ссылок */
-  ul li a:hover {
-      background-color: #007bff;
-      color: #fff;
-  }
-
-  /* Адаптивность для мобильных устройств */
-  @media (max-width: 768px) {
-      ul {
-          padding: 0;
-      }
-
-      ul li a {
-          font-size: 16px;
-          padding: 12px 15px;
-      }
-  }
-</style>
 {% endblock %}

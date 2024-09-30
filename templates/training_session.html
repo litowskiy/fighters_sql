@@ -1,84 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-3">
-    <h1 style="text-align: center; margin-bottom: 20px;">Тренировочная сессия от {{ today_date }}</h1>
-
+<body>
+    <h1>Тренировочная сессия от {{ today_date }}</h1>
     <form method="POST">
-        <div class="table-responsive" style="overflow-x: auto;">
-            <table id="matches-table" style="width: 100%; border-collapse: collapse; text-align: center;">
-                <thead>
+        <table border="1" id="matches-table">
+            <tr>
+                <th>Боец 1</th>
+                <th>Счет 1</th>
+                <th>Счет 2</th>
+                <th>Боец 2</th>
+            </tr>
+            {% for match in matches %}
+                {% if match[1] == 'skip' %}
                     <tr>
-                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Боец 1</th>
-                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Счет 1</th>
-                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Счет 2</th>
-                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Боец 2</th>
+                        <td colspan="4">{{ match[4] }} пропускает бой</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for match in matches %}
-                        {% if match[1] == 'skip' %}
-                            <tr>
-                                <td colspan="4" style="padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f9fa;">{{ match[4] }} пропускает бой</td>
-                            </tr>
-                        {% elif match[4] == 'skip' %}
-                            <tr>
-                                <td colspan="4" style="padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f9fa;">{{ match[1] }} пропускает бой</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ match[1] }}</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-                                    <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0" style="width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
-                                </td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-                                    <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0" style="width: 60px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
-                                </td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ match[4] }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
+                {% elif match[4] == 'skip' %}
+                    <tr>
+                        <td colspan="4">{{ match[1] }} пропускает бой</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>{{ match[1] }}</td>
+                        <td>
+                            <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0">
+                        </td>
+                        <td>
+                            <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0">
+                        </td>
+                        <td>{{ match[4] }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
         <input type="hidden" name="total_matches" value="{{ matches|length }}">
-
-        <div style="text-align: center; margin-top: 20px;">
-            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">Сохранить результаты</button>
-            <a href="/sessions/{{ today_date }}/add_fight" style="background-color: #007bff; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; cursor: pointer;">Добавить бой</a>
-        </div>
+        <button type="submit">Сохранить результаты</button>
+        <a href="/sessions/{{ today_date }}/add_fight" class="button">Добавить бой</a>
+        </script>
     </form>
-</div>
-
-<style>
-  /* Адаптивность для таблицы на мобильных устройствах */
-  @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-          display: block;
-      }
-
-      thead tr {
-          display: none;
-      }
-
-      tr {
-          margin-bottom: 15px;
-          border-bottom: 2px solid #ddd;
-          padding-bottom: 10px;
-      }
-
-      td {
-          display: flex;
-          justify-content: space-between;
-          padding: 10px;
-          border: none;
-      }
-
-      td::before {
-          content: attr(data-label);
-          font-weight: bold;
-          margin-right: 10px;
-      }
-  }
-</style>
+</body>
+</html>
 {% endblock %}

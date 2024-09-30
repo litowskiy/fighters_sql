@@ -1,46 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-3">
-    <h1 style="text-align: center; margin-bottom: 20px;">Профили бойцов</h1>
-    <ul class="list-unstyled" style="max-width: 800px; margin: 0 auto; padding: 0;">
+    <h1>Профили бойцов</h1>
+    <ul class="list-unstyled">
         {% for fighter in fighter_info %}
-            <li style="margin-bottom: 30px; border: 1px solid #ddd; border-radius: 8px; padding: 20px; background-color: #f9f9f9;">
-                <h2 style="margin-bottom: 15px;">Боец: {{ fighter[1] }}</h2>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    <li><strong>Побед:</strong> {{ fighter[2] }}</li>
-                    <li><strong>Поражений:</strong> {{ fighter[3] }}</li>
-                    <li><strong>КД:</strong> {{ fighter[4] }}</li>
+            <li>
+                <h2>Боец: {{ fighter[1] }}</h2>
+                <ul>
+                    <li>Побед: {{ fighter[2] }}</li>
+                    <li>Поражений: {{ fighter[3] }}</li>
+                    <li>КД: {{ fighter[4] }}</li>
                 </ul>
             </li>
         {% endfor %}
     </ul>
 
-    <h2 style="text-align: center; margin-top: 40px;">Бои этого бойца:</h2>
-    <ul class="list-unstyled" style="max-width: 800px; margin: 0 auto; padding: 0;">
+    <h2>Бои этого бойца:</h2>
+    <ul class="list-unstyled">
         {% for fight in fights %}
             {% if fight[1] != 'skip' and fight[4] != 'skip' %}
-                <li style="margin-bottom: 15px; padding: 10px; background-color: #f1f1f1; border-radius: 5px;">
+                <li>
                     <strong>Бой:</strong> {{ fight[1] }} {{ fight[2] }} - {{ fight[3] }} {{ fight[4] }}
                 </li>
             {% endif %}
         {% endfor %}
     </ul>
 
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="{{ url_for('list_profiles') }}" class="btn" style="background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">К профилям</a>
-    </div>
+    <a href="{{ url_for('list_profiles') }}" class="btn btn-link">К профилям</a>
 </div>
-
-<style>
-  /* Адаптивность для мобильных устройств */
-  @media (max-width: 768px) {
-      ul {
-          padding: 0;
-      }
-
-      ul li {
-          font-size: 16px;
-      }
-  }
-</style>
 {% endblock %}
