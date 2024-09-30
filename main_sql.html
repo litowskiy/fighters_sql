@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'danger' if category == 'error' else category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="container mt-3">
+    <h1 style="text-align: center; margin-bottom: 20px;">Статистика</h1>
+
+    <form method="POST" action="{{ url_for('main') }}">
+        <div class="table-responsive" style="overflow-x: auto; margin-bottom: 20px;">
+            <table class="table" style="width: 100%; min-width: 600px; border-collapse: collapse; table-layout: fixed;">
+                <thead>
+                <tr>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd;">Имя</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd; width: 80px;">Побед</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd; width: 80px;">Поражений</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd; width: 80px;">КД</th>
+                    <th style="padding: 10px; border-bottom: 2px solid #ddd; width: 100px;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for fighter in fighters %}
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <input type="text" name="name_{{ fighter[0] }}" value="{{ fighter[1] }}" style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" required>
+                        <input type="hidden" name="original_name_{{ fighter[0] }}" value="{{ fighter[1] }}">
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <input type="number" name="wins_{{ fighter[0] }}" value="{{ fighter[2] }}" style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" min="0" required>
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                        <input type="number" name="loses_{{ fighter[0] }}" value="{{ fighter[3] }}" style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;" min="0" required>
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">
+                        {% if fighter[3] != 0 %}
+                            {{ "%.2f"|format(fighter[2] / fighter[3]) }}
+                        {% else %}
+                            {{ fighter[2] }}
+                        {% endif %}
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: center;">
+                        <button type="submit" name="delete" value="{{ fighter[0] }}" style="background-color: #dc3545; color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer;">Удалить</button>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" name="save_changes" style="background-color: #007bff; color: white; padding: 12px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%; max-width: 300px; margin: 0 auto; display: block;">Сохранить изменения</button>
+    </form>
+
+    <h2 style="text-align: center; margin: 40px 0 20px;">Добавить бойца</h2>
+    <form method="POST" action="{{ url_for('main') }}" style="max-width: 400px; margin: 0 auto;">
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="display: block; margin-bottom: 5px;">Имя бойца</label>
+            <input type="text" id="name" name="name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <button type="submit" style="background-color: #28a745; color: white; padding: 12px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Создать бойца</button>
+    </form>
+</div>
+
+<style>
+  /* Стили для таблицы */
+  .table-responsive {
+      max-width: 100%;
+  }
+
+  table {
+      width: 100%;
+      border-collapse: collapse;
+  }
+
+  th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+  }
+
+  th {
+      background-color: #f2f2f2;
+  }
+
+  /* Адаптивность для маленьких экранов */
+  @media (max-width: 576px) {
+      table, tbody, th, td, tr {
+          display: block;
+      }
+
+      thead {
+          display: none;
+      }
+
+      tr {
+          margin-bottom: 15px;
+      }
+
+      td {
+          text-align: right;
+          padding-left: 50%;
+          position: relative;
+      }
+
+      td::before {
+          content: attr(data-label);
+          position: absolute;
+          left: 15px;
+          width: calc(50% - 30px);
+          padding-right: 10px;
+          white-space: nowrap;
+          font-weight: bold;
+          text-align: left;
+      }
+
+      td:last-child {
+          text-align: center;
+          padding-left: 10px;
+      }
+
+      input[type="text"], input[type="number"] {
+          width: 100%;
+      }
+  }
+</style>
+
+{% endblock %}

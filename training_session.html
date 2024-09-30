@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-3">
+    <h1 style="text-align: center; margin-bottom: 20px;">Тренировочная сессия от {{ today_date }}</h1>
+
+    <form method="POST">
+        <div class="table-responsive" style="overflow-x: auto;">
+            <table id="matches-table" style="width: 100%; border-collapse: collapse; text-align: center;">
+                <thead>
+                    <tr>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Боец 1</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Счет 1</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Счет 2</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Боец 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in matches %}
+                        {% if match[1] == 'skip' %}
+                            <tr>
+                                <td colspan="4" style="padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f9fa;">{{ match[4] }} пропускает бой</td>
+                            </tr>
+                        {% elif match[4] == 'skip' %}
+                            <tr>
+                                <td colspan="4" style="padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f9fa;">{{ match[1] }} пропускает бой</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td data-label="Боец 1" style="padding: 10px; border-bottom: 1px solid #ddd;">{{ match[1] }}</td>
+                                <td data-label="Счет 1" style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0" style="width: 100%; max-width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                </td>
+                                <td data-label="Счет 2" style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0" style="width: 100%; max-width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                </td>
+                                <td data-label="Боец 2" style="padding: 10px; border-bottom: 1px solid #ddd;">{{ match[4] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <input type="hidden" name="total_matches" value="{{ matches|length }}">
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" style="background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">Сохранить результаты</button>
+            <a href="/sessions/{{ today_date }}/add_fight" style="background-color: #007bff; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; cursor: pointer;">Добавить бой</a>
+        </div>
+    </form>
+</div>
+
+<style>
+  /* Адаптивность для таблицы на мобильных устройствах */
+  @media (max-width: 768px) {
+      .table-responsive {
+          overflow-x: auto;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: collapse;
+      }
+
+      thead {
+          display: none;
+      }
+
+      tbody tr {
+          display: block;
+          margin-bottom: 15px;
+          border-bottom: 1px solid #ddd;
+      }
+
+      tbody tr td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+      }
+
+      tbody tr td[data-label]:before {
+          content: attr(data-label);
+          font-weight: bold;
+      }
+
+      /* Регулируем ширину полей ввода */
+      tbody tr td input[type="number"] {
+          max-width: 80px;
+      }
+  }
+</style>
+{% endblock %}
