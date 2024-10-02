@@ -78,11 +78,12 @@ def mark_presence():
     fighters = cursor.fetchall()
     if request.method == 'POST':
         attended = request.form.getlist('attended')
-        today_date = create_training_session(attended)
-        return redirect(url_for('training_session', date=today_date))
+        full_rounds = int(request.form.getlist('full_rounds')[0])
+        today_date = create_training_session(attended, full_rounds)
+        return redirect(url_for('training_session', date=today_date, full_rounds=full_rounds))
     return render_template('mark_presence.html', fighters=fighters, title='Присутствющие')
 
-def create_training_session(attended_fighters):
+def create_training_session(attended_fighters, full_rounds):
     today_date = f'session_{datetime.now().strftime("%d_%m_%Y_%H_%M_%S")}'
     cursor.execute(f'''
     CREATE TABLE IF NOT EXISTS "{today_date}" (
@@ -105,7 +106,7 @@ def create_training_session(attended_fighters):
     y = fighters[num_fighters // 2:num_fighters]
 
     matches = []
-    for full_round in range(1): #TODO: Здесь добавляется колиство кругов!!!!!!
+    for full_round in range(full_rounds): #TODO: Здесь добавляется колиство кругов!!!!!!
         for round_num in range(num_fighters - 1):
             if round_num != 0:
                 x.insert(1, y.pop(0))
