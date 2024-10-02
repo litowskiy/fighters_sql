@@ -23,10 +23,10 @@
                     <tr>
                         <td>{{ match[1] }}</td>
                         <td>
-                            <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0">
+                            <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0" max="5">
                         </td>
                         <td>
-                            <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0">
+                            <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0" max="5">
                         </td>
                         <td>{{ match[4] }}</td>
                     </tr>

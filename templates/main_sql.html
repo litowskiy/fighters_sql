@@ -33,10 +33,10 @@
                         <input type="hidden" name="original_name_{{ fighter[0] }}" value="{{ fighter[1] }}">
                     </td>
                     <td>
-                        <input type="number" name="wins_{{ fighter[0] }}" value="{{ fighter[2] }}" class="form-control" min="0" required>
+                       {{ fighter[2] }}
                     </td>
                     <td>
-                        <input type="number" name="loses_{{ fighter[0] }}" value="{{ fighter[3] }}" class="form-control" min="0" required>
+                        {{ fighter[3] }}
                     </td>
                     <td>
                         {% if fighter[3] != 0 %}
