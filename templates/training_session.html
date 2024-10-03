@@ -33,10 +33,46 @@
                 {% endif %}
             {% endfor %}
         </table>
+
         <input type="hidden" name="total_matches" value="{{ matches|length }}">
         <button type="submit">Сохранить результаты</button>
         <a href="/sessions/{{ today_date }}/add_fight" class="button">Добавить бой</a>
-        </script>
+
+        <h3>Ранжирование по количеству побед</h3>
+    <table border="1">
+        <tr>
+            <th>Боец</th>
+            <th>Победы</th>
+            <th>Поражения</th>
+            <th>КД</th>
+        </tr>
+        {% for fighter, stats in ranked_fighters %}
+            <tr>
+                <td>{{ fighter }}</td>
+                <td>{{ stats['wins'] }}</td>
+                <td>{{ stats['losses'] }}</td>
+                <td>{{ stats['kd'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+        <h3>Ранжирование по чистоте боя</h3>
+    <table border="1">
+        <tr>
+            <th>Боец</th>
+            <th>Попал</th>
+            <th>Пропустил</th>
+            <th>Чистота боя</th>
+        </tr>
+        {% for fighter, stats in ranked_cleanness %}
+            <tr>
+                <td>{{ fighter }}</td>
+                <td>{{ stats['scored'] }}</td>
+                <td>{{ stats['conceded'] }}</td>
+                <td>{{ stats['clean_sheet'] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
     </form>
 </body>
 </html>

@@ -138,6 +138,91 @@ def create_training_session(attended_fighters, full_rounds):
     conn.commit()
     return today_date
 
+def get_top_fighter(date):
+    # Получаем все матчи из сессии
+    cursor.execute(f'SELECT * FROM "{date}"')
+    matches = cursor.fetchall()
+
+    # Получаем всех бойцов, участвующих в сессии
+    cursor.execute(f'''
+        SELECT FIGHTER_1 FROM "{date}" WHERE FIGHTER_1 != "skip"
+        UNION
+        SELECT FIGHTER_2 FROM "{date}" WHERE FIGHTER_2 != "skip"
+    ''')
+    fighters = [row[0] for row in cursor.fetchall()]
+
+    # Словарь для подсчета побед и поражений, инициализируем всех бойцов с 0 побед и 0 поражений
+    stats = {fighter: {'wins': 0, 'losses': 0} for fighter in fighters}
+
+    for match in matches:
+        fighter1, score1, score2, fighter2 = match[1], match[2], match[3], match[4]
+
+        # Пропускаем матчи с 'skip'
+        if fighter1 == 'skip' or fighter2 == 'skip':
+            continue
+
+        # Подсчитываем победы и поражения
+        if score1 > score2:
+            stats[fighter1]['wins'] += 1
+            stats[fighter2]['losses'] += 1
+        elif score2 > score1:
+            stats[fighter2]['wins'] += 1
+            stats[fighter1]['losses'] += 1
+
+    # Вычисляем КД для каждого бойца
+    for fighter in stats:
+        wins = stats[fighter]['wins']
+        losses = stats[fighter]['losses']
+        if losses == 0:
+            stats[fighter]['kd'] = wins  # Если поражений нет, КД равен количеству побед
+        else:
+            stats[fighter]['kd'] = round(wins / losses, 2)
+
+    # Сортируем бойцов по количеству побед в порядке убывания
+    sorted_fighters = sorted(stats.items(), key=lambda item: item[1]['wins'], reverse=True)
+
+    return sorted_fighters
+
+def get_cleanness(date):
+    # Получаем все матчи из сессии
+    cursor.execute(f'SELECT * FROM "{date}"')
+    matches = cursor.fetchall()
+
+    # Словарь для подсчета забитых и пропущенных очков
+    scores = {}
+
+    for match in matches:
+        fighter1, score1, score2, fighter2 = match[1], match[2], match[3], match[4]
+
+        # Пропускаем матчи с 'skip'
+        if fighter1 == 'skip' or fighter2 == 'skip':
+            continue
+
+        # Добавляем бойцов в словарь, если их там еще нет
+        if fighter1 not in scores:
+            scores[fighter1] = {'scored': 0, 'conceded': 0}
+        if fighter2 not in scores:
+            scores[fighter2] = {'scored': 0, 'conceded': 0}
+
+        # Подсчитываем забитые и пропущенные очки
+        scores[fighter1]['scored'] += score1
+        scores[fighter1]['conceded'] += score2
+        scores[fighter2]['scored'] += score2
+        scores[fighter2]['conceded'] += score1
+
+    # Вычисляем чистоту боя для каждого бойца
+    for fighter in scores:
+        scored = scores[fighter]['scored']
+        conceded = scores[fighter]['conceded']
+        if conceded == 0:
+            scores[fighter]['clean_sheet'] = scored  # Если пропущенных очков нет, чистота боя равна забитым очкам
+        else:
+            scores[fighter]['clean_sheet'] = round(scored / conceded, 2)
+
+    sorted_cleanness = sorted(scores.items(), key=lambda item: item[1]['clean_sheet'], reverse=True)
+
+    return sorted_cleanness
+
 def update_fighter_kd():
     cursor.execute('''
         UPDATE FIGHTERS SET KD = 
@@ -200,6 +285,7 @@ def training_session(date):
         if scores_updated:
             update_fighter_kd()  # Обновляем КД всех бойцов
 
+
         conn.commit()
 
         # Перенаправление на ту же страницу после сохранения данных
@@ -209,7 +295,10 @@ def training_session(date):
     cursor.execute(f'SELECT * FROM "{date}"')
     matches = cursor.fetchall()
 
-    return render_template('training_session.html', matches=matches, today_date=date)
+    ranked_fighters = get_top_fighter(date)
+    ranked_cleanness = get_cleanness(date)
+
+    return render_template('training_session.html', matches=matches, today_date=date, ranked_fighters=ranked_fighters, ranked_cleanness=ranked_cleanness)
 
 
 def update_fighter_stats(fighter1, old_score1, new_score1, fighter2, old_score2, new_score2):
