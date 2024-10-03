@@ -19,7 +19,7 @@
                         <td>{{ fighter[2] }}</td>
                         <td>{{ fighter[3] }}</td>
                         <td>
-                            {% if fighter[2] > 0 %}
+                            {% if fighter[2] > 0 and fighter[3] > 0 %}
                                 {{ "%.2f"|format(fighter[2] / fighter[3]) }}
                             {% else %}
                                 {{ fighter[2] }}
