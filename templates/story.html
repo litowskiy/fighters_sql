@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-3">
+    <h3>История тренировок</h3>
+    <ul class="list-unstyled">
+        {% for table in tables %}
+            <li>
+                <a href="{{ url_for('training_session', date=table) }}">{{ table }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
