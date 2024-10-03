@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-3">
-    <h3>Перед началом тренировки отметьте присутствующих</h3>
-    <form method="POST" action="/mark_presence" class="mt-3">
+<div class="container mt-5">
+    <h3 class="text-center">Перед началом тренировки отметьте присутствующих</h3>
+    <form method="POST" action="/mark_presence" class="mt-4">
         <div class="table-responsive">
-            <table class="table">
-                <thead>
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
                 <tr>
                     <th>Имя</th>
-                    <th>Присутствие</th>
+                    <th class="text-center">Присутствие</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for fighter in fighters %}
                 <tr>
                     <td>{{ fighter[1] }}</td>
-                    <td>
+                    <td class="text-center">
                         <input type="checkbox" class="form-check-input" name="attended" value="{{ fighter[1] }}">
                     </td>
                 </tr>
@@ -23,8 +23,15 @@
                 </tbody>
             </table>
         </div>
-        <input type="number" class="form-control" id="full_rounds" name="full_rounds" value="1" min="1">
-        <button type="submit" class="btn btn-primary">Начать тренировку</button>
+
+        <div class="mt-4 mb-3">
+            <label for="full_rounds" class="form-label">Количество полных раундов</label>
+            <input type="number" class="form-control" id="full_rounds" name="full_rounds" value="1" min="1">
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Начать тренировку</button>
+        </div>
     </form>
 </div>
 {% endblock %}

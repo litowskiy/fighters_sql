@@ -1,79 +1,99 @@
 {% extends 'base.html' %}
 {% block content %}
-<body>
-    <h1>Тренировочная сессия от {{ today_date }}</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Тренировочная сессия от {{ today_date }}</h1>
+
     <form method="POST">
-        <table border="1" id="matches-table">
-            <tr>
-                <th>Боец 1</th>
-                <th>Счет 1</th>
-                <th>Счет 2</th>
-                <th>Боец 2</th>
-            </tr>
-            {% for match in matches %}
-                {% if match[1] == 'skip' %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
                     <tr>
-                        <td colspan="4">{{ match[4] }} пропускает бой</td>
+                        <th>Боец 1</th>
+                        <th>Счет 1</th>
+                        <th>Счет 2</th>
+                        <th>Боец 2</th>
                     </tr>
-                {% elif match[4] == 'skip' %}
-                    <tr>
-                        <td colspan="4">{{ match[1] }} пропускает бой</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td>{{ match[1] }}</td>
-                        <td>
-                            <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0" max="5">
-                        </td>
-                        <td>
-                            <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0" max="5">
-                        </td>
-                        <td>{{ match[4] }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </table>
+                </thead>
+                <tbody>
+                {% for match in matches %}
+                    {% if match[1] == 'skip' %}
+                        <tr>
+                            <td colspan="4" class="text-center">{{ match[4] }} пропускает бой</td>
+                        </tr>
+                    {% elif match[4] == 'skip' %}
+                        <tr>
+                            <td colspan="4" class="text-center">{{ match[1] }} пропускает бой</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>{{ match[1] }}</td>
+                            <td>
+                                <input type="number" name="score1_{{ loop.index0 }}" value="{{ match[2] }}" min="0" max="5" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" name="score2_{{ loop.index0 }}" value="{{ match[3] }}" min="0" max="5" class="form-control">
+                            </td>
+                            <td>{{ match[4] }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <input type="hidden" name="total_matches" value="{{ matches|length }}">
-        <button type="submit">Сохранить результаты</button>
-        <a href="/sessions/{{ today_date }}/add_fight" class="button">Добавить бой</a>
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary">Сохранить результаты</button>
+            <a href="/sessions/{{ today_date }}/add_fight" class="btn btn-success">Добавить бой</a>
+        </div>
 
-        <h3>Ранжирование по количеству побед</h3>
-    <table border="1">
-        <tr>
-            <th>Боец</th>
-            <th>Победы</th>
-            <th>Поражения</th>
-            <th>КД</th>
-        </tr>
-        {% for fighter, stats in ranked_fighters %}
-            <tr>
-                <td>{{ fighter }}</td>
-                <td>{{ stats['wins'] }}</td>
-                <td>{{ stats['losses'] }}</td>
-                <td>{{ stats['kd'] }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+        <h3 class="mt-5">Ранжирование по количеству побед</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Боец</th>
+                        <th>Победы</th>
+                        <th>Поражения</th>
+                        <th>КД</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for fighter, stats in ranked_fighters %}
+                    <tr>
+                        <td>{{ fighter }}</td>
+                        <td>{{ stats['wins'] }}</td>
+                        <td>{{ stats['losses'] }}</td>
+                        <td>{{ stats['kd'] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <h3>Ранжирование по чистоте боя</h3>
-    <table border="1">
-        <tr>
-            <th>Боец</th>
-            <th>Попал</th>
-            <th>Пропустил</th>
-            <th>Чистота боя</th>
-        </tr>
-        {% for fighter, stats in ranked_cleanness %}
-            <tr>
-                <td>{{ fighter }}</td>
-                <td>{{ stats['scored'] }}</td>
-                <td>{{ stats['conceded'] }}</td>
-                <td>{{ stats['clean_sheet'] }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+        <h3 class="mt-5">Ранжирование по чистоте боя</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Боец</th>
+                        <th>Попал</th>
+                        <th>Пропустил</th>
+                        <th>Чистота боя</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for fighter, stats in ranked_cleanness %}
+                    <tr>
+                        <td>{{ fighter }}</td>
+                        <td>{{ stats['scored'] }}</td>
+                        <td>{{ stats['conceded'] }}</td>
+                        <td>{{ stats['clean_sheet'] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </form>
-</body>
-</html>
+</div>
 {% endblock %}
