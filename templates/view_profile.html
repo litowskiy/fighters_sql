@@ -95,6 +95,20 @@
         </table>
     </div>
 
+    <h2 class="mt-5 mb-3">Динамика чистоты боев</h2>
+    {% if plot_url_cleanness %}
+        <img src="data:image/png;base64,{{ plot_url_cleanness }}" alt="Динамика чистоты боев">
+    {% else %}
+        <p>Нет данных для построения графика.</p>
+    {% endif %}
+
+    <h2 class="mt-5 mb-3">Динамика КД</h2>
+    {% if plot_url_kd %}
+        <img src="data:image/png;base64,{{ plot_url_kd }}" alt="Динамика КД">
+    {% else %}
+        <p>Нет данных для построения графика.</p>
+    {% endif %}
+
     <h2 class="mt-5 mb-3">Бои</h2>
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -120,7 +134,6 @@
             </tbody>
         </table>
     </div>
-
-    <a href="{{ url_for('list_profiles') }}" class="btn btn-link mt-4">К профилям</a>
+    <a href="{{ url_for('list_profiles') }}" class="btn btn-primary">К профилям</a>
 </div>
 {% endblock %}
