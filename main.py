@@ -319,10 +319,21 @@ def update_fighter_stats(fighter1, old_score1, new_score1, fighter2, old_score2,
         cursor.execute('UPDATE FIGHTERS SET WINS = WINS + 1 WHERE NAME = ?', (fighter2,))
         cursor.execute('UPDATE FIGHTERS SET LOSES = LOSES + 1 WHERE NAME = ?', (fighter1,))
 
-@app.route('/sessions')
+@app.route('/sessions', methods=['GET', 'POST'])
 def list_sessions():
+    if request.method == 'POST':
+        # Получаем имя таблицы для удаления
+        table_to_delete = request.form.get('delete_table')
+        if table_to_delete:
+            # Выполняем SQL-запрос для удаления таблицы
+            cursor.execute(f"DROP TABLE IF EXISTS {table_to_delete};")
+            conn.commit()
+            flash(f"Сессия {table_to_delete} успешно удалена", "success")
+
+    # После удаления обновляем список таблиц
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'session_%';")
     tables = [row[0] for row in cursor.fetchall()]
+
     return render_template('story.html', tables=tables)
 
 @app.route('/sessions/<session_id>/add_fight', methods=['GET', 'POST'])
