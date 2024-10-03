@@ -1,0 +1,16 @@
+/* styles.css */
+
+/* Общие стили для графиков */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Медиа-запросы для мобильных устройств */
+@media (max-width: 768px) {
+    img {
+        width: 100%;
+    }
+}
