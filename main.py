@@ -1,6 +1,11 @@
 from flask import Flask, redirect, url_for, render_template, request, flash, jsonify
 import sqlite3
 from datetime import datetime
+import matplotlib
+matplotlib.use('Agg')  # Используем режим "без графического интерфейса"
+import matplotlib.pyplot as plt
+import io
+import base64
 
 #TODO: Переписать всю логику по бойцам в id
 #TODO: В БД ОСТАЕТСЯ СКИП ФАЙТЕР ДЛЯ КОРРЕКТНОГО ОТОБРАЖЕНИЯ ВО VIEW PROFILE!!
@@ -69,8 +74,6 @@ def main():
     conn.close()
 
     return render_template('main_sql.html', fighters=fighters, title='Основная')
-
-
 
 @app.route('/mark_presence', methods=['GET', 'POST'])
 def mark_presence():
@@ -319,6 +322,7 @@ def update_fighter_stats(fighter1, old_score1, new_score1, fighter2, old_score2,
         cursor.execute('UPDATE FIGHTERS SET WINS = WINS + 1 WHERE NAME = ?', (fighter2,))
         cursor.execute('UPDATE FIGHTERS SET LOSES = LOSES + 1 WHERE NAME = ?', (fighter1,))
 
+
 @app.route('/sessions', methods=['GET', 'POST'])
 def list_sessions():
     if request.method == 'POST':
@@ -335,6 +339,7 @@ def list_sessions():
     tables = [row[0] for row in cursor.fetchall()]
 
     return render_template('story.html', tables=tables)
+
 
 @app.route('/sessions/<session_id>/add_fight', methods=['GET', 'POST'])
 def add_fight(session_id):
@@ -398,7 +403,9 @@ def view_profile(profile_id):
     fights = get_all_entries_for_person(fighter_info[0][1])
     records = get_fighter_record(name)
     scores = get_fighter_scores(name)
-    return render_template('view_profile.html', fighter_info=fighter_info, fights=fights, scores=scores, records=records)
+    plot_url_cleanness = plot_clean_sheet_dynamics(name)
+    plot_url_kd = plot_kd_dynamics(name)
+    return render_template('view_profile.html', fighter_info=fighter_info, fights=fights, scores=scores, records=records, plot_url_cleanness=plot_url_cleanness, plot_url_kd=plot_url_kd)
 
 def get_all_entries_for_person(person_name):
     # Получаем список таблиц, начинающихся с 'session'
@@ -507,6 +514,83 @@ def get_fighter_scores(fighter_name):
 
     return scores
 
+def plot_clean_sheet_dynamics(fighter_name):
+    # Получаем все тренировочные сессии
+    cursor.execute('SELECT name FROM sqlite_master WHERE type="table" AND name LIKE "session_%"')
+    sessions = [row[0] for row in cursor.fetchall()]
+
+    clean_sheets = []
+    dates = []
+
+    for session in sessions:
+        # Получаем чистоту боев для текущей сессии
+        cleanness = get_cleanness(session)
+
+        # Ищем бойца в списке чистоты боев
+        for fighter, stats in cleanness:
+            if fighter == fighter_name:
+                clean_sheets.append(stats['clean_sheet'])
+                dates.append(session.split('_')[5])  # TODO:Извлекаем дату из имени сессии
+                break
+
+    # Построение графика
+    plt.figure(figsize=(10, 5))
+    plt.plot(dates, clean_sheets, marker='o')
+    plt.title(f'Динамика чистоты боев для {fighter_name}')
+    plt.xlabel('Дата сессии')
+    plt.ylabel('Чистота боя')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+
+    # Сохранение графика в байтовый поток
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plt.close()
+
+    # Кодирование изображения в base64
+    plot_url_cleanness = base64.b64encode(img.getvalue()).decode()
+
+    return plot_url_cleanness
+
+def plot_kd_dynamics(fighter_name):
+    # Получаем все тренировочные сессии
+    cursor.execute('SELECT name FROM sqlite_master WHERE type="table" AND name LIKE "session_%"')
+    sessions = [row[0] for row in cursor.fetchall()]
+
+    kds = []
+    dates = []
+
+    for session in sessions:
+        # Получаем КД для текущей сессии
+        top_fighters = get_top_fighter(session)
+
+        # Ищем бойца в списке КД
+        for fighter, stats in top_fighters:
+            if fighter == fighter_name:
+                kds.append(stats['kd'])
+                dates.append(session.split('_')[5])  # TODO:Извлекаем дату из имени сессии!!!!!!!!!!!
+                break
+
+    # Построение графика
+    plt.figure(figsize=(10, 5))
+    plt.plot(dates, kds, marker='o')
+    plt.title(f'Динамика КД для {fighter_name}')
+    plt.xlabel('Дата сессии')
+    plt.ylabel('КД')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+
+    # Сохранение графика в байтовый поток
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plt.close()
+
+    # Кодирование изображения в base64
+    plot_url_kd = base64.b64encode(img.getvalue()).decode()
+
+    return plot_url_kd
 
 if __name__ == '__main__':
     app.run(debug=True)
