@@ -97,14 +97,14 @@
 
     <h2 class="mt-5 mb-3">Динамика чистоты боев</h2>
     {% if plot_url_cleanness %}
-        <img src="data:image/png;base64,{{ plot_url_cleanness }}" alt="Динамика чистоты боев">
+        <img src="data:image/png;base64,{{ plot_url_cleanness }}" alt="Динамика чистоты боев" class="responsive-img">
     {% else %}
         <p>Нет данных для построения графика.</p>
     {% endif %}
 
     <h2 class="mt-5 mb-3">Динамика КД</h2>
     {% if plot_url_kd %}
-        <img src="data:image/png;base64,{{ plot_url_kd }}" alt="Динамика КД">
+        <img src="data:image/png;base64,{{ plot_url_kd }}" alt="Динамика КД" class="responsive-img">
     {% else %}
         <p>Нет данных для построения графика.</p>
     {% endif %}
