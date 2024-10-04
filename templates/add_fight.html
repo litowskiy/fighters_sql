@@ -3,107 +3,59 @@
 {% block title %}Добавить бой{% endblock %}
 
 {% block content %}
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Добавить бой</h1>
 
-        h1 {
-            text-align: center;
-            color: #007BFF;
-        }
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-warning">
+                {% for category, message in messages %}
+                    <p> {{ message }}</p>
+                {% endfor %}
+                <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+            </div>
+        {% endif %}
+    {% endwith %}
 
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        div {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            background-color: #007BFF;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 600px) {
-            form {
-                padding: 15px;
-            }
-
-            button {
-                font-size: 14px;
-            }
-        }
-    </style>
-
-    <h1>Добавить бой</h1>
-    <form id="addFighterForm" method="POST" action="/sessions/{{ session_id }}/add_fight">
-        <div>
-            <label for="session_id">Session ID:</label>
-            <input type="text" id="session_id" name="session_id" value="{{ session_id }}" readonly>
+    <form id="addFighterForm" method="POST" action="/sessions/{{ session_id }}/add_fight" class="shadow p-4 rounded bg-white">
+        <div class="mb-3">
+            <label for="session_id" class="form-label">ID сессии:</label>
+            <input type="text" id="session_id" name="session_id" class="form-control" value="{{ session_id }}" readonly>
         </div>
-        <div>
-            <label for="fighter1">Fighter 1:</label>
-            <select id="fighter1" name="fighter1" required>
-                <option value="" disabled selected>Select Fighter</option>
+
+        <div class="mb-3">
+            <label for="fighter1" class="form-label">Боец 1:</label>
+            <select id="fighter1" name="fighter1" class="form-select" required>
+                <option value="" disabled selected>Выберите бойца</option>
                 {% for fighter in fighters %}
                     <option value="{{ fighter }}">{{ fighter }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <label for="score1">Score 1:</label>
-            <input type="number" id="score1" name="score1" required>
+
+        <div class="mb-3">
+            <label for="score1" class="form-label">Счёт бойца 1:</label>
+            <input type="number" id="score1" name="score1" class="form-control" min="0" max="5" required>
         </div>
-        <div>
-            <label for="fighter2">Fighter 2:</label>
-            <select id="fighter2" name="fighter2" required>
-                <option value="" disabled selected>Select Fighter</option>
+
+        <div class="mb-3">
+            <label for="fighter2" class="form-label">Боец 2:</label>
+            <select id="fighter2" name="fighter2" class="form-select" required>
+                <option value="" disabled selected>Выберите бойца</option>
                 {% for fighter in fighters %}
                     <option value="{{ fighter }}">{{ fighter }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <label for="score2">Score 2:</label>
-            <input type="number" id="score2" name="score2" required>
+
+        <div class="mb-3">
+            <label for="score2" class="form-label">Счёт бойца 2:</label>
+            <input type="number" id="score2" name="score2" class="form-control" min="0" max="5" required>
         </div>
-        <button type="submit">Сохранить</button>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
     </form>
+</div>
 {% endblock %}

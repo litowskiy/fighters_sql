@@ -1,7 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Тренировочная сессия от {{ today_date }}</h1>
+    <h1 class="text-center mb-4">Тренировка {{ today_date }}</h1>
+    <h3 class="text-center mb-4" style="color: red;">Не забывайте сохранять бой СРАЗУ после его проведения!</h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-warning">
+                {% for category, message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
     <form method="POST">
         <div class="table-responsive">

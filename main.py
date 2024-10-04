@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request, flash, jsonify
+from flask import Flask, redirect, url_for, render_template, request, flash, jsonify, get_flashed_messages
 import sqlite3
 from datetime import datetime
 import matplotlib
@@ -245,6 +245,7 @@ def training_session(date):
         matches = cursor.fetchall()
 
         scores_updated = False  # Флаг для отслеживания изменений
+        equal_scores_found = False
 
         for i in range(total_matches):
             # Получаем данные из формы для каждого матча
@@ -285,11 +286,16 @@ def training_session(date):
 
             scores_updated = True  # Отмечаем, что было произведено обновление
 
+            if score1 == score2:
+                equal_scores_found = True
+
         if scores_updated:
             update_fighter_kd()  # Обновляем КД всех бойцов
 
-
         conn.commit()
+
+        if equal_scores_found:
+            flash('Внимание! Найдены матчи с равными счетами.', 'warning')
 
         # Перенаправление на ту же страницу после сохранения данных
         return redirect(url_for('training_session', date=date))
@@ -301,7 +307,7 @@ def training_session(date):
     ranked_fighters = get_top_fighter(date)
     ranked_cleanness = get_cleanness(date)
 
-    return render_template('training_session.html', matches=matches, today_date=date, ranked_fighters=ranked_fighters, ranked_cleanness=ranked_cleanness)
+    return render_template('training_session.html', matches=matches, today_date=date, ranked_fighters=ranked_fighters, ranked_cleanness=ranked_cleanness, get_flashed_messages=get_flashed_messages)
 
 
 def update_fighter_stats(fighter1, old_score1, new_score1, fighter2, old_score2, new_score2):
@@ -353,6 +359,10 @@ def add_fight(session_id):
         # Проверяем, что выбраны разные бойцы
         if fighter1 == fighter2:
             flash('Выберите двух разных бойцов.')
+            return redirect(url_for('add_fight', session_id=session_id))
+
+        if score1 == score2:
+            flash('Ошибка: Счета бойцов не могут быть одинаковыми.')
             return redirect(url_for('add_fight', session_id=session_id))
 
         # Обновляем данные в базе данных
