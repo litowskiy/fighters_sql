@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, request, flash, jsonify, get_flashed_messages
+from flask import Flask, redirect, url_for, render_template, request, flash, jsonify, get_flashed_messages, session
 import sqlite3
 from datetime import datetime
 import matplotlib
@@ -6,6 +6,7 @@ matplotlib.use('Agg')  # Используем режим "без графиче�
 import matplotlib.pyplot as plt
 import io
 import base64
+from functools import wraps
 
 #TODO: Переписать всю логику по бойцам в id
 #TODO: В БД ОСТАЕТСЯ СКИП ФАЙТЕР ДЛЯ КОРРЕКТНОГО ОТОБРАЖЕНИЯ ВО VIEW PROFILE!!
@@ -16,6 +17,40 @@ app.secret_key = 'your_secret_key'
 conn = sqlite3.connect('test.db', check_same_thread=False)
 cursor = conn.cursor()
 
+users = {
+    'test1': {'password': 'pass1', 'role': 'admin'}, #TODO: ВРЕМЕННЫЙ ЛОГИН, НО ЭТО ВООБЩЕ ПИЗДЕЦ ХАХАХХАХ
+}
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if username in users and users[username]['password'] == password:
+            session['username'] = username
+            session['role'] = users[username]['role']
+            flash('Авторизация успешна!', 'success')
+            return redirect(url_for('main'))
+        else:
+            flash('Неправильный логин или пароль', 'error')
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Вы вышли из аккаунта', 'success')
+    return redirect(url_for('main'))
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/')
 def home():
     return redirect(url_for('main'))
@@ -24,7 +59,7 @@ def home():
 def main():
     conn = sqlite3.connect('test.db')
     cursor = conn.cursor()
-    if request.method == 'POST':
+    if request.method == 'POST' and session['role'] == 'admin':
         # Обработка добавления бойца
         if 'name' in request.form and 'save_changes' not in request.form:
             name = request.form['name']
@@ -76,10 +111,11 @@ def main():
     return render_template('main_sql.html', fighters=fighters, title='Основная')
 
 @app.route('/mark_presence', methods=['GET', 'POST'])
+@login_required
 def mark_presence():
     cursor.execute('SELECT * FROM FIGHTERS')
     fighters = cursor.fetchall()
-    if request.method == 'POST':
+    if request.method == 'POST' and session['role'] == 'admin':
         attended = request.form.getlist('attended')
         full_rounds = int(request.form.getlist('full_rounds')[0])
         today_date = create_training_session(attended, full_rounds)
@@ -237,7 +273,7 @@ def update_fighter_kd():
 
 @app.route('/session/<date>', methods=['GET', 'POST'])
 def training_session(date):
-    if request.method == 'POST':
+    if request.method == 'POST' and session['role'] == 'admin':
         total_matches = int(request.form['total_matches'])  # Получаем количество матчей
 
         # Получаем текущие матчи перед обновлением
@@ -331,7 +367,7 @@ def update_fighter_stats(fighter1, old_score1, new_score1, fighter2, old_score2,
 
 @app.route('/sessions', methods=['GET', 'POST'])
 def list_sessions():
-    if request.method == 'POST':
+    if request.method == 'POST' and session['role'] == 'admin': #TODO: ВРЕМЕННЫЙ ЛОГИН
         # Получаем имя таблицы для удаления
         table_to_delete = request.form.get('delete_table')
         if table_to_delete:
@@ -349,7 +385,7 @@ def list_sessions():
 
 @app.route('/sessions/<session_id>/add_fight', methods=['GET', 'POST'])
 def add_fight(session_id):
-    if request.method == 'POST':
+    if request.method == 'POST' and session['role'] == 'admin':
         # Получаем данные из формы
         fighter1 = request.form['fighter1']
         score1 = int(request.form['score1'])
@@ -362,7 +398,7 @@ def add_fight(session_id):
             return redirect(url_for('add_fight', session_id=session_id))
 
         if score1 == score2:
-            flash('Ошибка: Счета бойцов не могут быть одинаковыми.')
+            flash('Ошибка: Счета бойцов не могут быть одинаковыми.', 'error')
             return redirect(url_for('add_fight', session_id=session_id))
 
         # Обновляем данные в базе данных
@@ -563,7 +599,7 @@ def plot_clean_sheet_dynamics(fighter_name):
 
     return plot_url_cleanness
 
-def plot_kd_dynamics(fighter_name):
+def plot_kd_dynamics(fighter_name): #TODO: Исрпавить функцию для подсчета КД
     # Получаем все тренировочные сессии
     cursor.execute('SELECT name FROM sqlite_master WHERE type="table" AND name LIKE "session_%"')
     sessions = [row[0] for row in cursor.fetchall()]
