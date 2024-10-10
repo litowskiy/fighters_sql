@@ -9,7 +9,9 @@
                     <a href="{{ url_for('training_session', date=table) }}" class="text-decoration-none text-dark">
                         {{ table }}
                     </a>
-                    <button type="submit" name="delete_table" value="{{ table }}" class="btn btn-danger btn-sm">Удалить</button>
+                    {% if session['role'] == 'admin' %}
+                        <button type="submit" name="delete_table" value="{{ table }}" class="btn btn-danger btn-sm">Удалить</button>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
